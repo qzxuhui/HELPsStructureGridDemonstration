@@ -498,6 +498,10 @@ for I=1:1:Num_Slave_Processor_Row
         M=M+1;
     end
 end
+
+%% construct grid node ghost
+% mapping from local node to neighbor node
+
 %% 节点信息计算
 % 得到从处理器下所有计算节点的横纵坐标
 M=1;
@@ -525,24 +529,7 @@ for I=1:1:Num_Slave_Processor_Row
         M=M+1;
     end
 end
-% 得到从处理器的中心坐标
-M=1;
-for I=1:1:Num_Slave_Processor_Row
-    for J=1:1:Num_Slave_Processor_Col
-        %计算当前从处理器的最西北端计算节点的全局坐标
-        c_x=0;
-        c_y=0;
-        for i=1:1:Slave_Processor(M).Num_Node_Local
-            c_x=c_x+Slave_Processor(M).Node_Coordinates_List_Calculate(i,1);
-            c_y=c_y+Slave_Processor(M).Node_Coordinates_List_Calculate(i,2);
-        end
-        c_x=c_x/Slave_Processor(M).Num_Node_Local;
-        c_y=c_y/Slave_Processor(M).Num_Node_Local;
-        Slave_Processor(M).Center_X_Coordinate=c_x;
-        Slave_Processor(M).Center_Y_Coordinate=c_y;
-        M=M+1;
-    end
-end
+
 %% 单元信息计算
 % 每一个从处理器形成单元信息列表
 M=1;
@@ -617,7 +604,7 @@ for I=1:1:Num_Slave_Processor_Row
         n=Slave_Processor(M).Num_Node_Cal_Inner;
         m=Slave_Processor(M).Num_Node_Cal_Outer;
         % 对施加随机力载荷
-        Slave_Processor(M).P=ones(2*n,1);
+        Slave_Processor(M).P=M*ones(2*n,1);
         M=M+1;
     end
 end
@@ -834,7 +821,6 @@ for I=1:1:Num_Slave_Processor_Row
                 for i=1:1:Slave_Processor(M).Num_X_Node_Local %遍历邻居消息传递的每一个点
                     neigh_id_in_local=Slave_Processor(M).Neighbour_North_Index_Calculation_List(g,1);
                     neigh_id_in_neigh=Slave_Processor(M).Neighbour_North_Index_Calculation_List(g,2);
-                    %                     if neigh_id_in_local<Slave_Processor(M).Num_Node_Cal_Inner
                     % 获取该邻居的自由度信息
                     for i2=1:1:2
                         dof_id_neighbour=2*neigh_id_in_neigh-2+i2;
@@ -845,7 +831,6 @@ for I=1:1:Num_Slave_Processor_Row
                                 Slave_Processor(N).Fix_DoF(dof_id_neighbour,2);
                         end
                     end
-                    %                     end
                     g=g+1;
                 end
             end
@@ -858,7 +843,6 @@ for I=1:1:Num_Slave_Processor_Row
                 for i=1:1:Num_Node_Extend_X %遍历邻居消息传递的每一个点
                     neigh_id_in_local=Slave_Processor(M).Neighbour_NorthEast_Index_Calculation_List(g,1);
                     neigh_id_in_neigh=Slave_Processor(M).Neighbour_NorthEast_Index_Calculation_List(g,2);
-                    %                     if neigh_id_in_local<Slave_Processor(M).Num_Node_Cal_Inner
                     % 获取该邻居的自由度信息
                     for i2=1:1:2
                         dof_id_neighbour=2*neigh_id_in_neigh-2+i2;
@@ -869,7 +853,6 @@ for I=1:1:Num_Slave_Processor_Row
                                 Slave_Processor(N).Fix_DoF(dof_id_neighbour,2);
                         end
                     end
-                    %                     end
                     g=g+1;
                 end
             end
@@ -882,7 +865,6 @@ for I=1:1:Num_Slave_Processor_Row
                 for i=1:1:Num_Node_Extend_X %遍历邻居消息传递的每一个点
                     neigh_id_in_local=Slave_Processor(M).Neighbour_East_Index_Calculation_List(g,1);
                     neigh_id_in_neigh=Slave_Processor(M).Neighbour_East_Index_Calculation_List(g,2);
-                    %                     if neigh_id_in_local<Slave_Processor(M).Num_Node_Cal_Inner
                     % 获取该邻居的自由度信息
                     for i2=1:1:2
                         dof_id_neighbour=2*neigh_id_in_neigh-2+i2;
@@ -893,7 +875,6 @@ for I=1:1:Num_Slave_Processor_Row
                                 Slave_Processor(N).Fix_DoF(dof_id_neighbour,2);
                         end
                     end
-                    %                     end
                     g=g+1;
                 end
             end
@@ -906,7 +887,6 @@ for I=1:1:Num_Slave_Processor_Row
                 for i=1:1:Num_Node_Extend_X %遍历邻居消息传递的每一个点
                     neigh_id_in_local=Slave_Processor(M).Neighbour_SouthEast_Index_Calculation_List(g,1);
                     neigh_id_in_neigh=Slave_Processor(M).Neighbour_SouthEast_Index_Calculation_List(g,2);
-                    %                     if neigh_id_in_local<Slave_Processor(M).Num_Node_Cal_Inner
                     % 获取该邻居的自由度信息
                     for i2=1:1:2
                         dof_id_neighbour=2*neigh_id_in_neigh-2+i2;
@@ -917,7 +897,6 @@ for I=1:1:Num_Slave_Processor_Row
                                 Slave_Processor(N).Fix_DoF(dof_id_neighbour,2);
                         end
                     end
-                    %                     end
                     g=g+1;
                 end
             end
@@ -930,7 +909,6 @@ for I=1:1:Num_Slave_Processor_Row
                 for i=1:1:Slave_Processor(M).Num_X_Node_Local %遍历邻居消息传递的每一个点
                     neigh_id_in_local=Slave_Processor(M).Neighbour_South_Index_Calculation_List(g,1);
                     neigh_id_in_neigh=Slave_Processor(M).Neighbour_South_Index_Calculation_List(g,2);
-                    %                     if neigh_id_in_local<Slave_Processor(M).Num_Node_Cal_Inner
                     % 获取该邻居的自由度信息
                     for i2=1:1:2
                         dof_id_neighbour=2*neigh_id_in_neigh-2+i2;
@@ -941,7 +919,6 @@ for I=1:1:Num_Slave_Processor_Row
                                 Slave_Processor(N).Fix_DoF(dof_id_neighbour,2);
                         end
                     end
-                    %                     end
                     g=g+1;
                 end
             end
@@ -954,7 +931,6 @@ for I=1:1:Num_Slave_Processor_Row
                 for i=1:1:Num_Node_Extend_X %遍历邻居消息传递的每一个点
                     neigh_id_in_local=Slave_Processor(M).Neighbour_SouthWest_Index_Calculation_List(g,1);
                     neigh_id_in_neigh=Slave_Processor(M).Neighbour_SouthWest_Index_Calculation_List(g,2);
-                    %                     if neigh_id_in_local<Slave_Processor(M).Num_Node_Cal_Inner
                     % 获取该邻居的自由度信息
                     for i2=1:1:2
                         dof_id_neighbour=2*neigh_id_in_neigh-2+i2;
@@ -965,7 +941,6 @@ for I=1:1:Num_Slave_Processor_Row
                                 Slave_Processor(N).Fix_DoF(dof_id_neighbour,2);
                         end
                     end
-                    %                     end
                     g=g+1;
                 end
             end
@@ -978,7 +953,6 @@ for I=1:1:Num_Slave_Processor_Row
                 for i=1:1:Num_Node_Extend_X %遍历邻居消息传递的每一个点
                     neigh_id_in_local=Slave_Processor(M).Neighbour_West_Index_Calculation_List(g,1);
                     neigh_id_in_neigh=Slave_Processor(M).Neighbour_West_Index_Calculation_List(g,2);
-                    %                     if neigh_id_in_local<Slave_Processor(M).Num_Node_Cal_Inner
                     % 获取该邻居的自由度信息
                     for i2=1:1:2
                         dof_id_neighbour=2*neigh_id_in_neigh-2+i2;
@@ -989,7 +963,6 @@ for I=1:1:Num_Slave_Processor_Row
                                 Slave_Processor(N).Fix_DoF(dof_id_neighbour,2);
                         end
                     end
-                    %                     end
                     g=g+1;
                 end
             end
@@ -1002,7 +975,6 @@ for I=1:1:Num_Slave_Processor_Row
                 for i=1:1:Num_Node_Extend_X %遍历邻居消息传递的每一个点
                     neigh_id_in_local=Slave_Processor(M).Neighbour_NorthWest_Index_Calculation_List(g,1);
                     neigh_id_in_neigh=Slave_Processor(M).Neighbour_NorthWest_Index_Calculation_List(g,2);
-                    %                     if neigh_id_in_local<Slave_Processor(M).Num_Node_Cal_Inner
                     % 获取该邻居的自由度信息
                     for i2=1:1:2
                         dof_id_neighbour=2*neigh_id_in_neigh-2+i2;
@@ -1013,7 +985,6 @@ for I=1:1:Num_Slave_Processor_Row
                                 Slave_Processor(N).Fix_DoF(dof_id_neighbour,2);
                         end
                     end
-                    %                     end
                     g=g+1;
                 end
             end
@@ -1863,133 +1834,13 @@ for Iter=1:1:Max_Iter
     for I=1:1:Num_Slave_Processor_Row
         for J=1:1:Num_Slave_Processor_Col   %对每一个从处理器进行遍历
             % 从处理器下为凝聚自由度的载荷向量分配内存空间
-            Slave_Processor(M).Res=zeros(Slave_Processor(M).Num_Node_Local*2,1);
-            for i=1:1:Slave_Processor(M).Num_Node_Local % 对每一个下属的节点的每一个自由度进行累加
-                for i1=1:2
-                    dof_id=(i-1)*2+i1;
-                    p0=0;
-                    % 对所有的相连处理器进行遍历
-                    % 当目标处理器是本地处理器时
-                    for j=1:1:Slave_Processor(M).Num_Node_Local*2
-                        p0=p0-Slave_Processor(M).Global_Stiffness_Matrix_nxn(dof_id,j)*Slave_Processor(M).U_n_old(j);
-                    end
-                    g=1;
-                    % 遍历邻居处理器North
-                    if Slave_Processor(M).Neighbour_North~=-1
-                        N=Slave_Processor(M).Neighbour_North;
-                        for q=1:1:2*Slave_Processor(M).Num_X_Node_Local-1
-                            local_id=Slave_Processor(M).Neighbour_Link_List(g,1);
-                            
-                            if local_id ~= i
-                                g=g+1;
-                                continue;
-                            end
-                            neigh_id=Slave_Processor(M).Neighbour_Link_List(g,3);
-                            
-                            K0=Slave_Processor(M).Neighbour_Link_Stiffness{g};
-                            for i2=1:1:2
-                                p0=p0-K0(i1,i2)*Slave_Processor(N).U_n_old(2*neigh_id-2+i2);
-                                
-                            end
-                            g=g+1;
-                        end
-                    end
-                    
-                    % 遍历邻居处理器NorthEast
-                    if Slave_Processor(M).Neighbour_NorthEast~=-1
-                        N=Slave_Processor(M).Neighbour_NorthEast;
-                        for q=1
-                            local_id=Slave_Processor(M).Neighbour_Link_List(g,1);
-                            if local_id ~= i
-                                g=g+1;
-                                continue;
-                            end
-                            neigh_id=Slave_Processor(M).Neighbour_Link_List(g,3);
-                            K0=Slave_Processor(M).Neighbour_Link_Stiffness{g};
-                            for i2=1:1:2
-                                p0=p0-K0(i1,i2)*Slave_Processor(N).U_n_old(2*neigh_id-2+i2);
-                            end
-                            g=g+1;
-                        end
-                    end
-                    % 遍历邻居处理器East
-                    if Slave_Processor(M).Neighbour_East~=-1
-                        N=Slave_Processor(M).Neighbour_East;
-                        for q=1:1:2*Slave_Processor(M).Num_Y_Node_Local-1
-                            local_id=Slave_Processor(M).Neighbour_Link_List(g,1);
-                            if local_id ~= i
-                                g=g+1;
-                                continue;
-                            end
-                            neigh_id=Slave_Processor(M).Neighbour_Link_List(g,3);
-                            K0=Slave_Processor(M).Neighbour_Link_Stiffness{g};
-                            for i2=1:1:2
-                                p0=p0-K0(i1,i2)*Slave_Processor(N).U_n_old(2*neigh_id-2+i2);
-                            end
-                            g=g+1;
-                        end
-                    end
-                    
-                    % 遍历邻居处理器SouthEast
-                    % 无
-                    % 遍历令狐处理器South
-                    if Slave_Processor(M).Neighbour_South~=-1
-                        N=Slave_Processor(M).Neighbour_South;
-                        for q=1:1:2*Slave_Processor(M).Num_X_Node_Local-1
-                            local_id=Slave_Processor(M).Neighbour_Link_List(g,1);
-                            if local_id ~= i
-                                g=g+1;
-                                continue;
-                            end
-                            neigh_id=Slave_Processor(M).Neighbour_Link_List(g,3);
-                            K0=Slave_Processor(M).Neighbour_Link_Stiffness{g};
-                            for i2=1:1:2
-                                p0=p0-K0(i1,i2)*Slave_Processor(N).U_n_old(2*neigh_id-2+i2);
-                            end
-                            g=g+1;
-                        end
-                    end
-                    % 遍历邻居处理器SouthWest
-                    if Slave_Processor(M).Neighbour_SouthWest~=-1
-                        N=Slave_Processor(M).Neighbour_SouthWest;
-                        for q=1
-                            local_id=Slave_Processor(M).Neighbour_Link_List(g,1);
-                            if local_id ~= i
-                                g=g+1;
-                                continue;
-                            end
-                            neigh_id=Slave_Processor(M).Neighbour_Link_List(g,3);
-                            K0=Slave_Processor(M).Neighbour_Link_Stiffness{g};
-                            for i2=1:1:2
-                                p0=p0-K0(i1,i2)*Slave_Processor(N).U_n_old(2*neigh_id-2+i2);
-                            end
-                            g=g+1;
-                        end
-                    end
-                    % 遍历邻居处理器West
-                    if Slave_Processor(M).Neighbour_West~=-1
-                        N=Slave_Processor(M).Neighbour_West;
-                        for q=1:1:2*Slave_Processor(M).Num_Y_Node_Local-1
-                            local_id=Slave_Processor(M).Neighbour_Link_List(g,1);
-                            if local_id ~= i
-                                g=g+1;
-                                continue;
-                            end
-                            neigh_id=Slave_Processor(M).Neighbour_Link_List(g,3);
-                            K0=Slave_Processor(M).Neighbour_Link_Stiffness{g};
-                            for i2=1:1:2
-                                p0=p0-K0(i1,i2)*Slave_Processor(N).U_n_old(2*neigh_id-2+i2);
-                            end
-                            g=g+1;
-                        end
-                    end
-                    
-                    % 遍历邻居处理器NoethWest
-                    % 无
-                    p0=p0+Slave_Processor(M).P(dof_id);
-                    Slave_Processor(M).Res(dof_id)=p0;
-                end
-            end
+            K_nxn = Slave_Processor(M).Global_Stiffness_Matrix_nxn;
+            K_nxm = Slave_Processor(M).Global_Stiffness_Matrix_mxn;
+            K= [K_nxn,K_nxm];
+            U=[Slave_Processor(M).U_n_old;Slave_Processor(M).U_m_old];
+            f=K*U;
+            Res = Slave_Processor(M).P-f;
+            Slave_Processor(M).Res = Res(1:Slave_Processor(M).Num_Node_Local*2);
             M=M+1;
         end
     end
@@ -2011,7 +1862,6 @@ for Iter=1:1:Max_Iter
                     % 当目标处理器是本地处理器时
                     for j=1:1:Slave_Processor(M).Num_Node_Local*2
                         Energy=Energy+0.5*Slave_Processor(M).U_n_old(dof_id)*Slave_Processor(M).Global_Stiffness_Matrix_nxn(dof_id,j)*Slave_Processor(M).U_n_old(j);
-                        
                     end
                     g=1;
                     % 遍历邻居处理器North
@@ -2162,20 +2012,18 @@ for Iter=1:1:Max_Iter
         for J=1:1:Num_Slave_Processor_Col
             % -----------------计算位移松弛模态----------------------------
             Slave_Processor(M).P_RD=Slave_Processor(M).P-Slave_Processor(M).Global_Stiffness_Matrix_mxn*Slave_Processor(M).U_m_old;
-            Slave_Processor(M).U_RD=Linear_Equations_Pivot_Gauss_Solver(Slave_Processor(M).Global_Stiffness_Matrix_nxn,Slave_Processor(M).P_RD);
+            Slave_Processor(M).U_RD=Slave_Processor(M).Global_Stiffness_Matrix_nxn\Slave_Processor(M).P_RD;
             % 计算得到第七个位移松弛模式
             Slave_Processor(M).Displacement_Model{7}=Slave_Processor(M).U_RD-Slave_Processor(M).U_n_old;
             % 计算得到第八个位移松弛模式
             for i=1:1:Slave_Processor(M).Num_Node_Cal_Inner
                 Slave_Processor(M).Displacement_Model{8}(2*i-1)=Slave_Processor(M).Displacement_Model{7}(2*i-1).*Slave_Processor(M).Node_Coordinates_List_Calculate(i,1);
                 Slave_Processor(M).Displacement_Model{8}(2*i)=Slave_Processor(M).Displacement_Model{7}(2*i).*Slave_Processor(M).Node_Coordinates_List_Calculate(i,1);
-                
             end
             % 计算得到第九个位移松弛模式
             for i=1:1:Slave_Processor(M).Num_Node_Cal_Inner
                 Slave_Processor(M).Displacement_Model{9}(2*i-1)=Slave_Processor(M).Displacement_Model{7}(2*i-1).*Slave_Processor(M).Node_Coordinates_List_Calculate(i,2);
                 Slave_Processor(M).Displacement_Model{9}(2*i)=Slave_Processor(M).Displacement_Model{7}(2*i).*Slave_Processor(M).Node_Coordinates_List_Calculate(i,2);
-                
             end
             % -----------------计算最速下降松弛模态----------------------------
             % 最速下降松弛模态：
@@ -2268,7 +2116,6 @@ for Iter=1:1:Max_Iter
                         end
                     end
                     % 遍历邻居节点SouthEast
-                    
                     % 遍历邻居节点South
                     if Slave_Processor(M).Neighbour_South~=-1
                         N=Slave_Processor(M).Neighbour_South;
